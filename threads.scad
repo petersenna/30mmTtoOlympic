@@ -48,11 +48,17 @@ module fillet(r, h) {
         }
 }
 $fn=128;
-//cylinder(d=28, h=26, center=true);
+//cylinder(d=27.5, h=26, center=true);
 difference() {
     cylinder(d=32, h=26, center=true);
-    translate([0,0,-27/2]) metric_thread (diameter=30, pitch=6.5, length=27, square=true, rectangle=0.225, n_starts=1, thread_size=9);
+    translate([0,0,-27/2]) metric_thread (diameter=30, pitch=6.5, length=27, square=true, rectangle=0.28, n_starts=1, thread_size=9); // rectangle=0.225 for 1mm depth
 }
+
+translate([0,0,0]) difference() {
+    cylinder(d=49.4, h=26,center=true);
+    cylinder(d=32, h=27,center=true);
+}
+
 //metric_thread (diameter=29.65, pitch=6.5, length=50, square=true, rectangle=0, n_starts=1);
 //translate([0,-15,26.25]) rotate([0,85,0]) cylinder(d=3,h=3,center=true, $fn=128);
 
