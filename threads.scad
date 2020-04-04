@@ -1,4 +1,67 @@
 /*
+ * 30mm threaded to Olympic Barbell (2 inch / 50mm) adapter
+ *
+ * Copyright 2020 Peter Senna Tschudin <peter.senna@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version  2.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * Print info: Sliced with PrusaSlic3r using the 0.2mm speed profile.
+ * PETG, 10 top solid layers, 10 bottom solid layers, 6 perimeters,
+ * no supports.
+ *
+ *                         ATTENTION!!!
+ *
+ * Double check dimensions of your barbell dimensions before printing.
+ * This is 10 hours+ print, and it is a tight fit for *my* barbell:
+ * My barbell screw:
+ *  - 29.65 mm external diameter
+ * My barbell screw thread:
+ *  - 6.5 mm pitch
+ *  - 3.5 mm wide
+ *  - 1.5 mm deep
+ *
+ * Olympic barbell weight ending specs:
+ *  - 49.4 mm - 49.56 mm diameter
+ *  - 431.79 mm length
+ *  - 41.27 mm stopper length
+ */
+
+$fn=128;
+
+//cylinder(d=27.5, h=26, center=true);
+
+difference() {
+    cylinder(d=32, h=200, center=true);
+    
+    // rectangle=0.225 for 1mm thread tooth depth
+    translate([0,0,36]) metric_thread (diameter=30, pitch=6.5, length=65, square=true, rectangle=0.28, n_starts=1, thread_size=9);
+
+    translate([0,0,-63.5]) cylinder(d=30, h=200, $fn=50, center=true);
+    translate([0,0,-(200+50+30)/2]) sphere(50);
+}
+
+translate([0,0,0]) difference() {
+    union() {
+        cylinder(d=50.5, h=200,center=true);
+        translate([0,0,-(200-21.25)/2]) cylinder(d=76,h=21.25,center=true);
+    }
+    cylinder(d=32, h=201,center=true);
+    translate([0,0,-(200+50+30)/2]) sphere(50);
+}
+
+/*
+ * Peter's code ends here. The following is a library from
+ * Dan Kirshner, copied and pasted here for convenience.
+ */
+
+/*
  * ISO-standard metric threads, following this specification:
  *          http://en.wikipedia.org/wiki/ISO_metric_screw_thread
  *
@@ -31,59 +94,6 @@
  * Version 1.2.  2012-09-09  Use discrete polyhedra rather than linear_extrude ()
  * Version 1.1.  2012-09-07  Corrected to right-hand threads!
  */
-
-// Examples.
-//
-// Standard M8 x 1.
-//metric_thread (diameter=8, pitch=1, length=4);
-
-
-// From: http://forum.openscad.org/rounded-corners-td3843.html
-module fillet(r, h) {
-    translate([r / 2, r / 2, 0])
-        difference() {
-            cube([r + 0.01, r + 0.01, h], center = true);
-            translate([r/2, r/2, 0])
-                cylinder(r = r, h = h + 1, center = true);
-        }
-}
-$fn=128;
-//cylinder(d=27.5, h=26, center=true);
-difference() {
-    cylinder(d=32, h=26, center=true);
-    translate([0,0,-27/2]) metric_thread (diameter=30, pitch=6.5, length=27, square=true, rectangle=0.28, n_starts=1, thread_size=9); // rectangle=0.225 for 1mm depth
-}
-
-translate([0,0,0]) difference() {
-    cylinder(d=49.4, h=26,center=true);
-    cylinder(d=32, h=27,center=true);
-}
-
-//metric_thread (diameter=29.65, pitch=6.5, length=50, square=true, rectangle=0, n_starts=1);
-//translate([0,-15,26.25]) rotate([0,85,0]) cylinder(d=3,h=3,center=true, $fn=128);
-
-// Non-standard: long pitch, same thread size.
-//metric_thread (diameter=8, pitch=4, length=4, thread_size=1, groove=true);
-
-// Non-standard: 20 mm diameter, long pitch, square "trough" width 3 mm,
-// depth 1 mm.
-//metric_thread (diameter=20, pitch=8, length=16, square=true, thread_size=6,
-//               groove=true, rectangle=0.333);
-
-// English: 1/4 x 20.
-//english_thread (diameter=1/4, threads_per_inch=20, length=1);
-
-// Tapered.  Example -- pipe size 3/4" -- per:
-// http://www.engineeringtoolbox.com/npt-national-pipe-taper-threads-d_750.html
-// english_thread (diameter=1.05, threads_per_inch=14, length=3/4, taper=1/16);
-
-// Thread for mounting on Rohloff hub.
-//difference () {
-//   cylinder (r=20, h=10, $fn=100);
-//
-//   metric_thread (diameter=34, pitch=1, length=10, internal=true, n_starts=6);
-//}
-
 
 // ----------------------------------------------------------------------------
 function segments (diameter) = min (50, max (ceil (diameter*6), 25));
@@ -400,5 +410,3 @@ module thread_polyhedron (radius, pitch, internal, n_starts, thread_size,
       }
    }
 }
-
-
